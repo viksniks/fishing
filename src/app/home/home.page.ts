@@ -26,14 +26,15 @@ export class HomePage {
   totalpiece: string = "";
   clickedtime: string = "";
   sektorObj: any = {};
-  sektorKeys:string[]=[];
-  disabledCalcultion:boolean = true;
+  sektorKeys: string[] = [];
+  disabledCalcultion: boolean = true;
+  init: boolean = false;
 
   constructor(private service: CallingService, private loader: LoadingController, private toast: ToastController) {
 
   }
 
-  
+
   getMetaInfo() {
     var ref = this;
     this.service.getMetaInfo(function (data) {
@@ -56,9 +57,16 @@ export class HomePage {
 
 
   numericOnly(event): boolean {
-    let patter = /^([0-9])$/;
-    let result = patter.test(event.key);
-    return result;
+    var p1 = /\s/g;
+    if (p1.test(event.key) == false) {
+      let patter = /^([0-9])$/;
+      let result = patter.test(event.key);
+      console.log(result);
+      return result;
+    }
+    else {
+      return true;
+    }
   }
 
 
@@ -71,9 +79,13 @@ export class HomePage {
         var p = 0;
         if (this.obj[this.keys[i]].weight) {
           let arr = this.obj[this.keys[i]].weight.split('\n');
-
+          if (this.obj[this.keys[i]].sektor == "B1") {
+            console.log(arr);
+          }
           for (var k = 0; k < arr.length; k++) {
-            w = w + parseFloat(arr[k]);
+            if (arr[k] != "") {
+              w = w + parseFloat(arr[k]);
+            }
 
           }
           //  temp.push({name:this.obj[this.keys[i]].name,weight:w});
@@ -85,7 +97,10 @@ export class HomePage {
           let arr = this.obj[this.keys[i]].piece.split('\n');
 
           for (var k = 0; k < arr.length; k++) {
+            if(arr[k] != "")
+            {
             p = p + parseFloat(arr[k]);
+            }
 
           }
           //  temp.push({name:this.obj[this.keys[i]].name,weight:w});
@@ -94,7 +109,7 @@ export class HomePage {
           //   this.sorted = temp;
         }
         if (w > 0) {
-          temp.push({sektor:this.obj[this.keys[i]].sektor, name: this.obj[this.keys[i]].name, weight: w, piece: p });
+          temp.push({ sektor: this.obj[this.keys[i]].sektor, name: this.obj[this.keys[i]].name, weight: w, piece: p });
         }
 
       }
@@ -266,7 +281,7 @@ export class HomePage {
   // }
 
   getData() {
-   
+
     let ref = this;
     this.loader.create({
       message: "kérlek várj..."
@@ -281,12 +296,15 @@ export class HomePage {
           ref.obj = data;
           ref.getMetaInfo();
           ref.getBigFish();
+          if (ref.init) {
+            ref.orderBySektor();
+          }
           ref.service.getClickedTime(function (data1) {
             if (data1) {
               ref.clickedtime = data1;
             }
           })
-        
+
 
           //ref.calculate();
 
@@ -317,11 +335,21 @@ export class HomePage {
           })
 
         }
+        ref.init = true;
       })
     })
 
   }
+  getSortedDataForSektor(key) {
+    var arr = [];
+    for (var k = 0; k < this.sorted.length; k++) {
+      if (key == this.sorted[k].sektor[0]) {
+        arr.push(this.sorted[k]);
+      }
+    }
+    return arr;
 
+  }
 
   showToast(msg) {
     this.toast.create({
@@ -332,42 +360,37 @@ export class HomePage {
     })
   }
 
-orderBySektor()
-{
-  var ref = this;
-  var sektorTemp = [];
-  this.sektorObj = {};
- 
-  for (var i = 0; i < ref.keys.length; i++) {
-    if(ref.obj[ref.keys[i]].sektor != "")
-    {
-    sektorTemp.push(ref.obj[ref.keys[i]].sektor[0]);
+  orderBySektor() {
+    var ref = this;
+    var sektorTemp = [];
+    this.sektorObj = {};
+
+    for (var i = 0; i < ref.keys.length; i++) {
+      if (ref.obj[ref.keys[i]].sektor != "") {
+        sektorTemp.push(ref.obj[ref.keys[i]].sektor[0]);
+      }
+
     }
+    console.log(sektorTemp);
+    sektorTemp = sektorTemp.filter((c, index) => {
+      return sektorTemp.indexOf(c) === index;
+    });
+    sektorTemp = sektorTemp.sort();
+    console.log(sektorTemp);
+    for (var j = 0; j < sektorTemp.length; j++) {
+      var arrtemp = [];
+      for (var k = 0; k < ref.keys.length; k++) {
+        if (sektorTemp[j] == ref.obj[ref.keys[k]].sektor.trim()[0]) {
+          arrtemp.push(ref.obj[ref.keys[k]])
+        }
 
+      }
+      ref.sektorObj[sektorTemp[j]] = arrtemp;
+    }
+    ref.sektorKeys = Object.keys(ref.sektorObj);
+    console.log(ref.sektorObj);
+    ref.disabledCalcultion = false;
   }
-  console.log(sektorTemp);
-  sektorTemp = sektorTemp.filter((c, index) => {
-    return sektorTemp.indexOf(c) === index;
-});
-sektorTemp = sektorTemp.sort();
-console.log(sektorTemp);
-for(var j = 0;j<sektorTemp.length;j++)
-{
-  var arrtemp = [];
-  for(var k = 0;k<ref.keys.length;k++)
-  {
-   if(sektorTemp[j] == ref.obj[ref.keys[k]].sektor.trim()[0])
-   {
-     arrtemp.push(ref.obj[ref.keys[k]])
-   }
-
-  }
-  ref.sektorObj[sektorTemp[j]] = arrtemp;
-}
-ref.sektorKeys = Object.keys(ref.sektorObj);
-console.log(ref.sektorObj);
-ref.disabledCalcultion = false;
-}
 
 
 }

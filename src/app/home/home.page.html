@@ -229,17 +229,17 @@
 
   </ion-list-header>
 
-<div *ngFor="let s of sorted;let i = index;">
+<div *ngFor="let s of getSortedDataForSektor(key);let i = index;">
   <ion-item *ngIf="s.sektor[0] == key"  style="color: #ffffff;">
-    <div >
-      <!-- <h1 style="color: #ffffff;" slot="start">{{i+1}}</h1> -->
+    
+      <h1 style="color: #ffffff;" slot="start">{{i+1}}</h1>
     
     <ion-label>
       <h2 style="color: #ffffff;">{{s.name}}</h2>
       <h3 style="color: #ffffff;">Eddig összesen: / Total wight {{s.weight}} Gramm</h3>
       
     </ion-label>
-    </div>
+    
   </ion-item>
 </div>
 
