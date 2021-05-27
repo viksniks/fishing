@@ -1,0 +1,168 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+   Horgászverseny.VIP
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content  [fullscreen]="true">
+
+  <ion-card>
+  
+      <ion-item>
+        <ion-icon slot="start" color="primary" name="location-outline"></ion-icon>
+       <ion-label style="color: #ece805; font-size:20px;"><b>Helyszin:</b></ion-label>
+        <ion-input [(ngModel)]="location" style="font-size:20px;" class="form-control" type="text" placeholder="Ird be a helyszint...."></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon slot="start" color="primary" name="document-text-outline"></ion-icon>
+       <ion-label style="color: #ece805; font-size:20px;"><b>Megjegyzés:</b></ion-label>
+       <ion-textarea [(ngModel)]="comments" style="font-size:20px;"  cols="40" rows="5" class="form-control" type="text" placeholder="Megjegyzés...."></ion-textarea>
+      </ion-item>
+   
+
+  
+    <ion-card-content>
+      <!-- <ion-button slot="end" size="small">Save</ion-button> -->
+      <!-- <ion-button class="btn btn-default" color="primary" type="button" (click)="addFieldValue()">Add</ion-button> -->
+    </ion-card-content>
+  </ion-card>
+
+<ion-grid>
+  <ion-row>
+    <ion-col>
+      <div>
+        <table class="table table-striped table-bordered" id="customers">
+          <thead>
+              <tr>
+                  <th class="tname">Versenyző neve</th>
+                  <th>Szektor</th>
+                  <th>Súly (gr)</th>
+                  <th>Darab</th>
+                  <th>Idő</th>
+                  <th>Törlés</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let key of keys; let i = index">
+                  <td>
+                      <ion-input style="font-size:20px;"  cols="40" rows="5" [(ngModel)]="obj[key].name" class="form-control name" type="text" ></ion-input> 
+                  </td>
+                  <td>
+                    <ion-input  style="font-size:20px;"  cols="40" rows="5" [(ngModel)]="obj[key].sektor" class="form-control" type="text" ></ion-input> 
+                </td>
+                  <td>
+                      <ion-textarea  style="font-size:20px;" cols="40" rows="5" [(ngModel)]="obj[key].weight" class="form-control" type="text" ></ion-textarea>
+                  </td>
+                  <td>
+                      <ion-textarea  style="font-size:20px;"  cols="40" rows="5" [(ngModel)]="obj[key].piece" class="form-control" type="text" ></ion-textarea>
+                  </td>
+                  <td>
+                    <ion-textarea  style="font-size:20px;"  cols="40" rows="5" [(ngModel)]="obj[key].time" class="form-control" type="text" ></ion-textarea>
+                </td>
+                  <td>
+                      <ion-button  class="btn btn-default" color="danger"  type="button" (click)="deleteFieldValue(key)"><ion-icon name="close-outline"></ion-icon></ion-button>
+                  </td>
+              </tr>
+              <tr>
+                  <!-- <td>
+                      <ion-input cols="40" rows="5" class="form-control name" type="text" id="newAttributeName" [(ngModel)]="newAttribute.name" name="newAttributeName"></ion-input>
+                  </td>
+                  <td>
+                    <ion-input cols="40" rows="5" class="form-control" type="text" id="newAttributeSzektor" [(ngModel)]="newAttribute.sektor" name="newAttributeSzektor"></ion-input>
+                </td>
+                  <td>
+                      <ion-textarea cols="40" rows="5" class="form-control" type="text" id="newAttributeWeight" [(ngModel)]="newAttribute.weight" name="newAttributeWeight"></ion-textarea>
+                  </td>
+                  <td>
+                      <ion-textarea cols="40" rows="5" class="form-control" type="text" id="newAttributePiece" [(ngModel)]="newAttribute.piece" name="newAttributePiece"></ion-textarea>
+                  </td>
+                  <td>
+                    <ion-textarea cols="40" rows="5" class="form-control" type="text" id="newAttributeTime" [(ngModel)]="newAttribute.time" name="newAttributeTime"></ion-textarea>
+                </td> -->
+                  <!-- <td>
+                      <ion-button class="btn btn-default" color="primary" type="button" (click)="addFieldValue()">Add</ion-button>
+                  </td> -->
+              </tr>
+          </tbody>
+      </table>
+       
+      </div>
+    </ion-col>
+    
+  </ion-row>
+  <br>
+  <br>
+  <ion-item>
+    <ion-icon style="color: #ece805;" slot="start" name="fish-outline"></ion-icon>
+   <ion-label style="color: #ece805; font-size:25px;"><b>Big Fish (gr):</b></ion-label>
+    <ion-input [(ngModel)]="bigfish" style="font-size:25px;" class="form-control" type="text" placeholder="Ird ide...."></ion-input>
+  </ion-item>
+  <br>
+  <br>
+  <ion-button (click)="insertData()" color="secondary">
+    <ion-icon slot="end" name="save"></ion-icon>
+    Mentés
+  </ion-button>
+  <ion-button class="btn btn-default calculate" color="danger" style="text-align: center;" (click)="calculate()" type="button" >Állás számítás <ion-icon name="calculator-outline"></ion-icon></ion-button>
+  <ion-button class="btn btn-default add" color="success" style="text-align: right;" type="button" (click)="addFieldValue()">Új csapat <ion-icon name="add-outline"></ion-icon></ion-button>
+
+  <br>
+  <br>
+  <ion-row>
+    <ion-col>
+      <div class="ion-text-start">
+        <h3 style="color: #ffffff;">Halak száma Összesen: <span style="color: #ffffff;">{{totalpiece}}</span></h3>
+        
+      </div>
+      <div class="ion-text-start">
+        <h3 style="color: #ffffff;">Teljes súly (gr): <span style="color: #ffffff;">{{totalweight}} </span></h3>
+        
+      </div>
+    </ion-col>
+  
+  </ion-row>
+  <br>
+  <br>
+   <!-- Calculation here -->
+  <ion-list style="color: #ffffff;">
+    <ion-list-header>
+      <h2 style="color: #ffffff;">Jelenlegi állás:</h2>
+
+    </ion-list-header>
+    <ion-list-header>
+      <h2 style="color: #ffffff;">Idő: <span>{{clickedtime}}</span></h2>
+
+    </ion-list-header>
+
+
+    <ion-item *ngFor="let s of sorted;let i = index;" style="color: #ffffff;">
+      
+        <h1 style="color: #ffffff;" slot="start">{{i+1}}</h1>
+      
+      <ion-label>
+        <h2 style="color: #ffffff;">{{s.name}}</h2>
+        <h3 style="color: #ffffff;">Eddig összesen: {{s.weight}} Gramm</h3>
+        
+      </ion-label>
+    </ion-item>
+
+   
+
+    
+  </ion-list>
+
+</ion-grid>
+
+
+
+
+</ion-content>
+<br><br><br>
+<ion-footer>
+  <ion-toolbar>
+    <ion-title>VIP</ion-title>
+  </ion-toolbar>
+</ion-footer>
